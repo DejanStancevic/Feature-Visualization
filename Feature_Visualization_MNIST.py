@@ -123,7 +123,7 @@ x = torch.nn.Parameter(torch.rand(1, 28, 28), requires_grad=True)
 
 optimizer = optim.SGD([x], lr = 0.1, momentum = 0.5) # Be careful, if lambd is big lr needs to be small, otherwise it becomes chaotic and does not optimize
 
-def regularization(x, lambd = 1): # Since activation is ReLU, it is unbounded. Hence, we need to insure input does not grow to extremes
+def regularization(x, lambd = 1): # Since activation is ReLU, it is unbounded. Sometimes it helps, some times results stay the same.
     return( lambd * torch.sqrt(torch.sum(x**2)) )
 
 activation = {}
@@ -140,7 +140,7 @@ hook = model_children[1].register_forward_hook(get_activation('cnn_1'))
 
 for i in range(500):
     net(x)
-    #loss = - activation['cnn_1'][0, 9] + regularization(x,2) # Linear layers
+    #loss = - activation['cnn_1'][0, 9] + regularization(x) # Linear layers
     loss = - regularization(activation['cnn_1'][9, :, :]) + regularization(x) # Convolutional layers
     
     optimizer.zero_grad()
